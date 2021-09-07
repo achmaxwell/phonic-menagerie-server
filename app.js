@@ -9,14 +9,8 @@ const port = 3000
   const auth = require('./controllers/Auth')
   app.use("/auth", auth)
 
-  const vinyl = require('./controllers/Vinyl')
-  app.use('/vinyl', vinyl)
-
-  const cd = require('./controllers/CD')
-  app.use('/cd', cd)
-
-  const cassette = require('./controllers/cassette')
-  app.use('/cassette', cassette)
+  const collection = require('./controllers/Collection')
+  app.use('/collection', collection)
 
   const wishlist = require('./controllers/wishlist')
   app.use('/wishlist', wishlist)
