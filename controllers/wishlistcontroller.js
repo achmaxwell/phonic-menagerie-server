@@ -1,39 +1,40 @@
 const { Router } = require("express");
 const Express = require("express");
 const router = Express.Router();
-let validateJWT = require("../middleware/validate-jwt");
+// let validateJWT = require("../middleware/validate-jwt");
 
-const { CollectionModel } = require("../models");
+const { WishListModel } = require("../models");
 
 //create/add note
 router.post("/add",  async (req, res) => {
-    const { artist, album, format, cat } = req.body.notes; 
+    const { artist, album, format, cat, price } = req.body.notes; 
     const id = req.user.id; 
-    const collectionItem = {
+    const wishItem = {
         artist,
         album,
         format,
         cat,
+        price,
         owner_id: id
     }
     try {
-        const newItem = await CollectionModel.create(collectionItem);
-        res.status(200).json(newItem);
+        const newWishItem = await WishListModel.create(wishItem);
+        res.status(200).json(newWishItem);
     } catch (err) {
         res.status(500).json({ error: err });
     }
 });
 
-// Amelia GET notes by owner
-router.get("/myCollection", (async (req, res) => {
+// GET item by owner
+router.get("/myWishItems", (async (req, res) => {
     const { id } = req.user;
     try {
-        const userItem = await CollectionModel.findAll({
+        const userWishItems = await WishListModel.findAll({
             where: {
                 owner_id: id
             }
         });
-        res.status(200).json(userItem);
+        res.status(200).json(userWishItems);
     } catch (err) {
         res.status(500).json({ error: err });
     }
@@ -41,27 +42,28 @@ router.get("/myCollection", (async (req, res) => {
 
 //Update a Note
 router.put("/update/:idToUpdate", async (req, res) => {
-    const { artist, album, format, cat } = req.body.notes;
-    const itemId = req.params.idToUpdate;
+    const { artist, album, format, cat, price } = req.body.notes;
+    const wishItemId = req.params.idToUpdate;
     const userId = req.user.id;
 
     const query = {
         where: {
-            id: itemId,
+            id: wishItemId,
             owner_id: userId
         }
     };
 
-    const updatedNote = {
+    const updatedWishItem = {
         artist: artist,
         album: album,
         format: format,
         cat: cat,
+        price: price,
         owner_id: userId
     };
 
     try {
-        const update = await NotesModel.update(updatedNote, query);
+        const update = await WishListModel.update(updatedWishItem, query);
         res.status(200).json(update);
     } catch (err) {
         res.status(500).json({ error: err });
@@ -71,21 +73,22 @@ router.put("/update/:idToUpdate", async (req, res) => {
 //Delete a note
 router.delete("/delete/:idToDelete", async (req, res) => {
     const ownerId = req.user.id
-    const itemId = req.params.idToDelete;
+    const wishItemId = req.params.idToDelete;
 
     try {
         const query = {
             where: {
-                id: itemId,
+                id: wishItemId,
                 owner_id: ownerId
             }
         };
 
-        await NotesModel.destroy(query);
-        res.status(200).json({ message: "Your note has been deleted" });
+        await WishListModel.destroy(query);
+        res.status(200).json({ message: "Your item has been deleted" });
     } catch (err) {
         res.status(500).json({ error: err });
     }
 })
 
 module.exports = router;
+
