@@ -4,6 +4,8 @@ const { UserModel } = require("../models");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { UniqueConstraintError } = require("sequelize/lib/errors");
+const validateIsAdmin = require("../middleware/validate-is-admin");
+const validateSession = require("../middleware/validate-jwt");
 
 router.post('/create', async (req, res) => {
     const { email, password } = req.body.user;
@@ -11,11 +13,14 @@ router.post('/create', async (req, res) => {
     try {
         const NewUser = await UserModel.create({
             email,
-            password: bcrypt.hashSync(password, 13)
+            password: bcrypt.hashSync(password, 13),
+            IsAdmin
         })
         
         let token = jwt.sign(
-            { id : NewUser.id }, 
+            { id : NewUser.id,
+            isAdmin: NewUser.isAdmin,
+            }, 
             process.env.JWT_SECRET, 
             { expiresIn : 60 * 60 * 24 }
         );
@@ -76,5 +81,15 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ error })
     }
 });
+
+//Admin Only
+router.get("/all", [validateSession, validateIsAdmin]), async(req, res) => {
+    try {
+        const results = await UserModel.findAll();
+        res.status(200).json(results);
+    } catch (err) {
+        res.status(500).json({ error: err });
+    }
+};
 
 module.exports = router;

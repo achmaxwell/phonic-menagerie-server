@@ -1,12 +1,12 @@
 const { Router } = require("express");
 const Express = require("express");
 const router = Express.Router();
-// let validateJWT = require("../middleware/validate-jwt");
+let validateSession = require("../middleware/validate-jwt");
 
 const { CollectionModel } = require("../models");
 
-//create/add note
-router.post("/add",  async (req, res) => {
+//create/add collection
+router.post("/add", validateSession,  async (req, res) => {
     const { artist, album, format, cat } = req.body.collection; 
     const id = req.user.id; 
     const item = {
@@ -25,7 +25,7 @@ router.post("/add",  async (req, res) => {
 });
 
 // GET item by owner
-router.get("/myItems", (async (req, res) => {
+router.get("/myItems", validateSession, (async (req, res) => {
     const { id } = req.user;
     try {
         const userItems = await CollectionModel.findAll({
@@ -40,8 +40,8 @@ router.get("/myItems", (async (req, res) => {
 }));
 
 //Update a Note
-router.put("/update/:idToUpdate", async (req, res) => {
-    const { artist, album, format, cat } = req.body.notes;
+router.put("/update/:idToUpdate", validateSession, async (req, res) => {
+    const { artist, album, format, cat } = req.body.collection;
     const itemId = req.params.idToUpdate;
     const userId = req.user.id;
 
@@ -68,8 +68,8 @@ router.put("/update/:idToUpdate", async (req, res) => {
     }
 });
 
-//Delete a note
-router.delete("/delete/:idToDelete", async (req, res) => {
+//Delete a collection
+router.delete("/delete/:idToDelete", validateSession, async (req, res) => {
     const ownerId = req.user.id
     const itemId = req.params.idToDelete;
 

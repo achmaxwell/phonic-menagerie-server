@@ -1,13 +1,13 @@
 const { Router } = require("express");
 const Express = require("express");
 const router = Express.Router();
-// let validateJWT = require("../middleware/validate-jwt");
+let validateSession = require("../middleware/validate-jwt");
 
 const { WishListModel } = require("../models");
 
-//create/add note
-router.post("/add",  async (req, res) => {
-    const { artist, album, format, cat, price } = req.body.notes; 
+//create/add
+router.post("/add", validateSession, async (req, res) => {
+    const { artist, album, format, cat, price } = req.body.wishList; 
     const id = req.user.id; 
     const wishItem = {
         artist,
@@ -26,7 +26,7 @@ router.post("/add",  async (req, res) => {
 });
 
 // GET item by owner
-router.get("/myWishItems", (async (req, res) => {
+router.get("/myWishItems", validateSession, (async (req, res) => {
     const { id } = req.user;
     try {
         const userWishItems = await WishListModel.findAll({
@@ -40,9 +40,9 @@ router.get("/myWishItems", (async (req, res) => {
     }
 }));
 
-//Update a Note
-router.put("/update/:idToUpdate", async (req, res) => {
-    const { artist, album, format, cat, price } = req.body.notes;
+//Update
+router.put("/update/:idToUpdate", validateSession, async (req, res) => {
+    const { artist, album, format, cat, price } = req.body.wishList;
     const wishItemId = req.params.idToUpdate;
     const userId = req.user.id;
 
@@ -70,8 +70,8 @@ router.put("/update/:idToUpdate", async (req, res) => {
     }
 });
 
-//Delete a note
-router.delete("/delete/:idToDelete", async (req, res) => {
+//Delete
+router.delete("/delete/:idToDelete", validateSession, async (req, res) => {
     const ownerId = req.user.id
     const wishItemId = req.params.idToDelete;
 

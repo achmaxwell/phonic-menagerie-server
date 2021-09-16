@@ -20,11 +20,12 @@ const validateSession = async (req, res, next) => {
         )
             : undefined;
 
-        // console.log("payload -->", payload);
+        console.log(payload)
+
         
         if (payload) {
             let foundUser = await UserModel.findOne({ where: { id: payload.id } });
-            // console.log("foundUser -->", foundUser);
+            console.log("foundUser -->", foundUser);
 
             if (foundUser) {
                 // console.log("request -->", req);
