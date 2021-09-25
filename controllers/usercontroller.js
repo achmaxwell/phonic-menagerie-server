@@ -8,18 +8,17 @@ const validateIsAdmin = require("../middleware/validate-is-admin");
 const validateSession = require("../middleware/validate-jwt");
 
 router.post('/create', async (req, res) => {
-    const { email, password } = req.body.user;
+    const { email, password, isAdmin } = req.body.user;
     
     try {
         const NewUser = await UserModel.create({
             email,
             password: bcrypt.hashSync(password, 13),
-            IsAdmin
+            isAdmin
         })
         
         let token = jwt.sign(
             { id : NewUser.id,
-            isAdmin: NewUser.isAdmin,
             }, 
             process.env.JWT_SECRET, 
             { expiresIn : 60 * 60 * 24 }
@@ -83,13 +82,13 @@ router.post('/login', async (req, res) => {
 });
 
 //Admin Only
-router.get("/all", [validateSession, validateIsAdmin]), async(req, res) => {
-    try {
-        const results = await UserModel.findAll();
-        res.status(200).json(results);
-    } catch (err) {
-        res.status(500).json({ error: err });
-    }
-};
+
+router.get("/allUsers", validateSession, validateIsAdmin, (async (req, res) => {
+    console.log(validateIsAdmin())
+    await UserModel.findAll().then(user => {
+        res.json(user)
+    })
+    .catch(err => res.status(500).json({error: err}))
+}));
 
 module.exports = router;
