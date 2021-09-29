@@ -7,7 +7,7 @@ const { WishListModel } = require("../models");
 
 //create/add
 router.post("/add", validateSession, async (req, res) => {
-    const { artist, album, format, cat, price } = req.body.wishList; 
+    const { artist, album, format, cat, price } = req.body.wishlist; 
     const id = req.user.id; 
     const wishItem = {
         artist,

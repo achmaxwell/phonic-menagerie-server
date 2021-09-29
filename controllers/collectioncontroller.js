@@ -39,7 +39,7 @@ router.get("/myItems", validateSession, (async (req, res) => {
     }
 }));
 
-//Update a Note
+//Update
 router.put("/update/:idToUpdate", validateSession, async (req, res) => {
     const { artist, album, format, cat } = req.body.collection;
     const itemId = req.params.idToUpdate;
