@@ -25,9 +25,9 @@ router.post('/create', async (req, res) => {
         );
         
         res.status(201).json({
-            NewUser,
+            user: NewUser,
             message: "User successfully created!",
-            token
+            sessionToken: token
         });
     } catch (error) {
     if (error instanceof UniqueConstraintError) {
@@ -62,9 +62,9 @@ router.post('/login', async (req, res) => {
                 );
     
                 res.status(200).json({
-                    LoggedInUser,
+                    user: LoggedInUser,
                     message: "User successfully logged in!",
-                    token: token
+                    sessionToken: token
                 });
             } else {
                 res.status(401).json({
