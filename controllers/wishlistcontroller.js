@@ -42,7 +42,7 @@ router.get("/myWishItems", validateSession, (async (req, res) => {
 
 //Update
 router.put("/update/:idToUpdate", validateSession, async (req, res) => {
-    const { artist, album, format, cat, price } = req.body.wishList;
+    const { artist, album, format, cat, price } = req.body.wishlist;
     const wishItemId = req.params.idToUpdate;
     const userId = req.user.id;
 
